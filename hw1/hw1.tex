@@ -5,6 +5,7 @@
 \usepackage{fancyhdr}
 \usepackage{parskip}
 \usepackage[english]{babel}
+\usepackage{amssymb}
 
 \pagestyle{fancy}
 \fancyhf{}
@@ -76,20 +77,31 @@ Show that P can be replaced by L and we still get a characterization of NP\; i.e
 
 \begin{proof}
 
-  In order to prove $\implies$
+  In order to prove $\implies$ we are going to use a similar technique that the one used in Cook-Levin Theorem proof. To proof it, it shows a polynomial-time Karp reducible function from any $L$ in NP and every $x \in L$ to $SAT$. The naive approach results into a $\psi_x$ CNF formulae of length $\ell 2^{\ell}$ which is \textbf{not} computable in polynomial time. The technique used in the proof to find such $\varphi_x$ that can be computed in polynomial time for every $x \in L$ is the following: if $L$ is in NP, then there exists a two-tape oblivious polynomial TM such that:
 
-To prove the claim we are going to heavily rely on the Cook-Levin Theorem proof. Cook-Leving proof uses a clever technique to reduce the size of the CNF formula \phivar_x. This technique is based on the fact that any TM can be reduced to an oblivious TM (with an overhead of T(n)^2) and any oblivious TM can be encoded with a chain of snapshots such that any snapshot on the chain can be verified only by checking the previous snapshot. We can use part of the proof from From Cook-Levin Theorem that states that: "an input x \in " occurs if and only if there exists a string y in {} and a sequence of string z, ... ,z t(n) in {0,1} that satisfy the following condiionts:
+\begin{equation} \label{eq:1}
+x \in L \Leftrightarrow \exists u \in \{ 0, 1 \}^{p(|x|)} \ s.t. \ M(x,u) = 1
+\end{equation}
 
-1
-2.
-3.
-4.
+Then, it uses the property that the position of the head on an oblivious TM does not depend on the input, only of its size and the fact that this TM has only two tapes to translate this TM to a sequence of strings that uniquely determine this TM and it can be verified so by checking the following conditions:
 
-We need to prove that 1,2,3,4 can be computed by a TM M in at most log n space. In order to verify the four previous steps we need to verify for all i <= T(n), the snapshot zi is correct given the tuple {zi-1, yinputpos(i), Zprev(i).
+\begin{enumerate}
+  \item The first $n$ bits of $y$ are equal to $x$.
+  \item The string $z_1$ encodes the initial snapshot of $M$. That is, $z1$, encodes the triple $\langle \triangleright, \square, q_{start} \rangle$.
+  \item For every $i \in \{ 2, \dots , T(n) \}$, $z_i = F(z_{i-1}, z_{inputpos(i)}, z_{prev(i)})$.
+  \item The last string $z_{t(n)}$ encodes a snapshot in which the machine halts and ouputs 1.
+\end{enumerate}
 
-all that you need to compute the next snapshot is, the previous snapshot, zi−1 which doesn't vary based on input size. Also the current input tape content which needs at most logn bits as an index, and having to remember when the head had last visited its current working tape position or index it's currently on to re-check its tape contents to determine the next move, which is at most a constant. Thus it can be done under logarithmic space.
+  So, the formula $\varphi_x$ will take variables $y \in \{0,1\}^{n+p(n)}$ (the concatenation of the input $x$ and the certificate $u$)  and $z \in \{ 0, 1 \}^{cT(n)}$ (the snapshots/configuraitons) and will verify that y,z satisfy the $AND$ of these four conditions. Thus $x \in L \Leftrightarrow  \varphi_x \in SAT$. The last step of the proof consist of proving that we can express the four conditions of $\varphi_x$ in polynomial time.
 
-The $\Longleftarrow$ is trivial to proof.
+
+  From the previous proof, we should realize that any oblivious TM can be translated into a finite series of snapshots and given $y$, $z$ (as defined above) we can verify that those snapshots uniquely encode the oblivious TM $M$ and they produce the same output as if you were running $M(x,u)$. We only need to proof that there is a TM that can verify the previous four conditions, not only in polynomial time as stated in Cook-Levin Theorem, but also in \textit{logspace}.
+
+
+  Both 1,2,4 are easy to proof because any $z_i$ has at most length $c$ where c is a constant that depends on the characteristics of the TM. The tricky part is proving that 3 can be checked in logspace. The variable $i$ ranges from 1 to $T$, which is the total number of steps the $TM$ being snapshot takes before halting. Since the TM runs in polynomial time, i.e. $n^c$ for some constant $c$. This the number of bits needed to represent $i$ should only range from $1$ to $c \cdot \log n$ which is only logarithmic space. I should also add, that if you think about it, all that you need to compute the next snapshot is, the previous snapshot, $z_{i-1}$ which doesn't vary based on input size. Also the current input tape content which needs at most $\log n$ bits as an index, and having to remember when the head had last visited its current working tape position or index it's currently on to re-check its tape contents to determine the next move, which is at most a constant. Thus it can be done under logarithmic space.
+
+
+  The $\Longleftarrow$ is trivial to proof.
 
 
 \end{proof}
