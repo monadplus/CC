@@ -1,0 +1,90 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{fancyhdr}
+\usepackage{parskip}
+
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{Arnau Abella \- MIRI}
+\lhead{Computational Complexity}
+\rfoot{Page \thepage}
+
+\title{Homework 1}
+\author{Arnau Abella}
+\date{\today}
+
+\begin{document}
+
+\section{Exercise: Composition of logspace computable functions}
+
+A function $f : \{ 0,1 \} ^* \to \{ 0,1 \} ^*$ is called \textit{moderate} if there is exist a polynomial $p(n)$ such that $|f(x)| \leq p(|x|)$ for every $x \in \{ 0, 1 \} ^*$.
+
+
+The \textit{bit-graph} of $f$ is the following language:
+
+
+\[
+BIT_f := \{  \langle x, i \rangle : 1 \leq i \leq |f(x)| \text{and the i-th bit of}\ f(x) \text{ is 1}\ \}
+\]
+
+
+We say that $f$ is \textit{logspace computable} if $BIT_f$ is decidable in space $O(\log n)$; i.e., it is in L. Show that if $f : \{ 0,1 \} ^* \to \{ 0,1 \} ^*$ and $g : \{ 0,1 \} ^* \to \{ 0,1 \} ^*$ are both moderate and logspace computable, then the composition $f \circ g$ is also moderate and logspace computable.
+
+
+\begin{proof}
+  First, we are going to prove that \textit{moderate} is close under composition, and then, that \textit{logspace computability} is also close under composition.
+
+
+  To prove that \textbf{if $f$ and $g$ are moderate, then $f \circ g$ is moderate} we are going to show a polynomial $p(n)\ s.t\ |f(g(x))| \leq p(|x|) \ \text{for every} x \in \{ 0, 1 \} ^*$.
+
+
+  We apply $g(x)$ to $f$ and because $f$ is moderate, then there is a polynomial $p''(n)$ such that $|f(g(x))| \leq p''(|g(x)|)$. But, we also know that $g$ is moderate so for every $x \in \{ 0, 1 \} ^*$ there is a polynomial $p'(n)$ such that $|g(x)| \leq p'(|x|)$. Hence, $|f(g(x))| \leq p''(p'(|x|))$. If we reduce the polynomials to their \textit{canonical form} i.e.\ $p'(n) \equiv n^c $ and $p''(m) \equiv m^{c'} $, then $|f(g(x))| \leq (|x|^c)^{c'}$. Finally we replace $(|x|^c)^{c'} by n^d$ and replace it by its polynomial form $p(n)$ which result in $|f(g(x))| \leq p(|x|)$.
+
+
+  To prove that \textbf{if $f$ and $g$ are logspace computable, then $f \circ g$ is logspace computable} we are going to show that $BIT_{f \circ g}$ is decidable in space $O(\log n)$. $BIT_{f \circ g}$ is decidable in space $O(\log n)$ means that there is a TM $M$ that computes the function $f_L: \{ 0,1 \} ^* \to  \{ 0,1 \} ^*$, where $f_L(x) = 1$ and at most $c \cdot \log n$ locations, where $c$ is a constant, on M's work tapes are ever visited by $M$'s head during its computation on every input of length $n$. Let's define this TM $M$. M on input $\langle x, i \rangle$ checks if $f(g(x) = 1$ in \textit{logspace} by using both $BIT_f$ and $BIT_g$.
+
+
+  We can have the machine $g$ compute $g(x)$ and then the machine $f$ compute $f(g(x)$. But this computation is not \textit{logspace computabe} even though the worktapes of $f$ and $g$ only uses $O(\log n)$ space. The problem is that we need to copy the output of $g(x)$ into one of M's worktapes in order to input it to $f$, and this output is \textbf{not} logspace.
+
+
+  The trick is to notice that altough the computation of $f$ needs every bit of $g(x)$, it needs only \textbf{one bit at a time}.
+
+
+  Using additional $O(\log n) space$ for a counter, we can determine the number of the bit of g(x) that f currently needs. The space of the counter can be limited to $O(\log n)$ because $1 \leq i \leq |f(g(x))|$ by the definition of $BIT_f$ and we proved that $|f(g(x))| \leq p(n)$ on the first part, so $i$ can be encoded in $\log p(n)$. We start from the beggining of x, moving the head to the $i$ position by using the counter and use the bit under the head $\$u$ to compute $g(u)$ and then compute $f(g(u))$ to determine if the $i$-th bit of $f(g(x))$ is 1. This TM $M$ can decide the language $BIT_{f \circ g}$ for every input $\langle x, i \rangle$ by applying the same procedure of discarding the non-neeed bits of $g(x)$.
+
+
+\end{proof}
+
+\section{Exercise: Logspace verifiers}
+
+Recall that NP has been characterized as the class of languages A for which there exists a polynomial $p(n)$ and a language $B$ in P such that for every string $x$ we have:
+
+\[
+  x \in A \Leftrightarrow \exists y \in \{ 0 , 1 \} ^ * \, s.t. \, |y| \leq p(|x|) \, and \, \langle x, y \rangle \in B.
+\]
+
+Show that P can be replaced by L and we still get a characterization of NP\; i.e.\ the verifier can be restricted to running not only in polynomial time but even logarithmic space (since L $\subseteq$ P , one half of this statement is obvious; you are asked to prove the otehr half without proving P $\subseteq$ L which, fyi, is an open problem).
+
+\begin{proof}
+
+  A function $f : \{ 0 , 1 \} ^* \to \{ 0 , 1 \} ^*$ is \textit{implicitly logspace computable}, if $f$ is polynomially bounded (i.e.\, there's a $c$ such that $|f(x)| \leq |x|^c\ \text{for every}\ x \in \{ 0 , 1 \} ^*$) and the language $L_f \{ \langle x, i \rangle | \ i \leq |f(x)|\}$ and $L'_f = \{ \langle x, i \rangle | i \leq |f(x)| \}$ are in \textbf{L}.
+
+
+  A language B is \textit{logspace reducible} to a language C, denotaded B $\leq_l$ C, if there is a function $f : \{ 0 , 1 \} ^* \to \{ 0 , 1 \} ^*$  that is \textit{implicitly logspace computable} and $x \in B$ iff $f(x) \in C$ for every $x \in \{ 0 , 1 \} ^*$.
+
+
+  The second lemma of \textit{logspace reducible languages} says that: if $B \leq_l C$  and $C \in L$ then $B \in L$.
+
+
+  If we prove that there exist a language $C$ that belongs to $L$, and we prove that $B$ is \textit{logspace reducible} to C, then by the the definition of the logspace reducible lemma, $B \in L$.
+
+
+  Considering $BIT_f$ as the language C that belongs to $L$ because is decidable in space $O(\log n)$, we know that there is a \textit{implicitly  logspace computable} f, the characterize function of the language $BIT_f$, that is polynomially bounded by definition. Furthemore, for every x, iff $x \in B$, then, by the definition of $BIT_f$, $f(x) \in BIT_f$. The other implication follows a similar prove.
+
+
+
+\end{proof}
+
+\end{document}

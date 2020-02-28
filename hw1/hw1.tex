@@ -1,0 +1,97 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{fancyhdr}
+\usepackage{parskip}
+\usepackage[english]{babel}
+
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{Arnau Abella \- MIRI}
+\lhead{Computational Complexity}
+\rfoot{Page \thepage}
+
+\title{Homework 1}
+\author{Arnau Abella}
+\date{\today}
+
+\begin{document}
+
+\section{Exercise: Composition of logspace computable functions}
+
+A function $f : \{ 0,1 \} ^* \to \{ 0,1 \} ^*$ is called \textit{moderate} if there is exist a polynomial $p(n)$ such that $|f(x)| \leq p(|x|)$ for every $x \in \{ 0, 1 \} ^*$.
+
+
+The \textit{bit-graph} of $f$ is the following language:
+
+
+\[
+BIT_f := \{  \langle x, i, b\rangle : 1 \leq i \leq |f(x)| \text{and the i-th bit of}\ f(x) \text{ is } b \}
+\]
+
+
+We say that $f$ is \textit{logspace computable} if $BIT_f$ is decidable in space $O(\log n)$; i.e., it is in L. Show that if $f : \{ 0,1 \} ^* \to \{ 0,1 \} ^*$ and $g : \{ 0,1 \} ^* \to \{ 0,1 \} ^*$ are both moderate and logspace computable, then the composition $f \circ g$ is also moderate and logspace computable.
+
+
+\begin{proof}
+  First, we are going to prove that \textit{moderate} is close under composition, and then, that \textit{logspace computability} is also close under composition.
+
+
+  To prove that \textbf{if $f$ and $g$ are moderate, then $f \circ g$ is moderate} we are going to show a polynomial $p(n)\ s.t\ |f(g(x))| \leq p(|x|) \ \text{for every} x \in \{ 0, 1 \} ^*$.
+
+
+  We apply $g(x)$ to $f$ and because $f$ is moderate, then there is a polynomial $p''(n)$ such that $|f(g(x))| \leq p''(|g(x)|)$. But, we also know that $g$ is moderate so for every $x \in \{ 0, 1 \} ^*$ there is a polynomial $p'(n)$ such that $|g(x)| \leq p'(|x|)$. Hence, $|f(g(x))| \leq p''(p'(|x|))$. If we reduce the polynomials to their \textit{canonical form} i.e.\ $p'(n) \equiv n^c $ and $p''(m) \equiv m^{c'} $, then $|f(g(x))| \leq (|x|^c)^{c'}$. Finally we replace $(|x|^c)^{c'} by n^d$ and replace it by its polynomial form $p(n)$ which result in $|f(g(x))| \leq p(|x|)$.
+
+
+  To prove that \textbf{if $f$ and $g$ are logspace computable, then $f \circ g$ is logspace computable} we are going to show that $BIT_{f \circ g}$ is decidable in space $O(\log n)$. $BIT_{f \circ g}$ is decidable in space $O(\log n)$ means that there is a TM $M$ that computes the function $f_L: \{ 0,1 \} ^* \to  \{ 0,1 \} ^*$, where $f_L(x) = 1$ and at most $c \cdot \log n$ locations ($c$ is a constant) on M's work tapes are ever visited by $M$'s head during its computation on every input of length $n$. Let's define a TM $M$ that on input $\langle x, i, b \rangle$ checks if $f(g(x)) = b$ in the $i$-th bit in \textit{logspace} by using both $M_f$ and $M_g$ that are given by the statement of this problem.
+
+
+  The algorithm is simple. Using $M_g$ we can compute $g(x)$, store the result in M's working tape, and then compute $f(g(x))$ using $M_f$. But this computation is not \textit{logspace computabe} even though the worktapes of $f$ and $g$ only uses $O(\log n)$ space. The problem is that we need to copy the output of $g(x)$ into one of M's worktapes in order to input it to $M_f$, and this output is \textbf{not} logspace.
+
+
+  The trick is to notice is that, altough $M_f$ needs every bit of $g(x)$, it needs only \textbf{one bit at a time}. So we can compute $g(x)$ and copy a single bit to the work tape at each iteration of $M_f$ and discard the rest.
+
+
+  To store the current iteration of $M_f$ we need a counter. The space of the counter can be limited to $O(\log n)$ because $1 \leq i \leq |f(g(x))|$ by the definition of $BIT_f$ and we proved that $|f(g(x))| \leq p(n)$ on the first part, so the \#iteration can be encoded in $c \cdot \log n$, where $c$ is a constant. Additionally, we need to know the length of $g(x)$ in order to stop processing $M_f$ and halt, however, this is not given, but it can be decided by computing both $M_g(\langle x, i, 0\rangle)$ and $M_g(\langle x, i, 1\rangle)$. If the output of both is 0, then $g(x)$ has finished and we can halt $M$.
+
+
+  Our TM $M$ needs 4 tapes (input, output, counter, result of the $it$-th bit $g(x)$). We start by setting the counter to 0, computing $g(x)$ using $M_g(x, i, b)$ (we need to perform the test of halting we mentioned in the previous paragraph), copying the $n$th-bit $u$ ($n$ is given by the counter), and computing $M_f(u, i, b)$ (using the same $b$ that halted $M_g$) on that bit and copying the result to the output tape. This needs to be done recursively. At each new iteration we will increase the counter by one. As soon as $M_g$ halts, we can halt $M$ and the answer will be written in the output tape.
+
+
+  This TM $M$ can decide the language $BIT_{f \circ g}$ for every input $\langle x, i \rangle$ by applying the same procedure of discarding the non-neeed bits of $g(x)$.
+
+
+\end{proof}
+
+\section{Exercise: Logspace verifiers}
+
+Recall that NP has been characterized as the class of languages A for which there exists a polynomial $p(n)$ and a language $B$ in P such that for every string $x$ we have:
+
+\[
+  x \in A \Leftrightarrow \exists y \in \{ 0 , 1 \} ^ * \, s.t. \, |y| \leq p(|x|) \, and \, \langle x, y \rangle \in B.
+\]
+
+Show that P can be replaced by L and we still get a characterization of NP\; i.e.\ the verifier can be restricted to running not only in polynomial time but even logarithmic space (since L $\subseteq$ P , one half of this statement is obvious; you are asked to prove the otehr half without proving P $\subseteq$ L which, fyi, is an open problem).
+
+\begin{proof}
+
+  In order to prove $\implies$
+
+To prove the claim we are going to heavily rely on the Cook-Levin Theorem proof. Cook-Leving proof uses a clever technique to reduce the size of the CNF formula \phivar_x. This technique is based on the fact that any TM can be reduced to an oblivious TM (with an overhead of T(n)^2) and any oblivious TM can be encoded with a chain of snapshots such that any snapshot on the chain can be verified only by checking the previous snapshot. We can use part of the proof from From Cook-Levin Theorem that states that: "an input x \in " occurs if and only if there exists a string y in {} and a sequence of string z, ... ,z t(n) in {0,1} that satisfy the following condiionts:
+
+1
+2.
+3.
+4.
+
+We need to prove that 1,2,3,4 can be computed by a TM M in at most log n space. In order to verify the four previous steps we need to verify for all i <= T(n), the snapshot zi is correct given the tuple {zi-1, yinputpos(i), Zprev(i).
+
+all that you need to compute the next snapshot is, the previous snapshot, zi−1 which doesn't vary based on input size. Also the current input tape content which needs at most logn bits as an index, and having to remember when the head had last visited its current working tape position or index it's currently on to re-check its tape contents to determine the next move, which is at most a constant. Thus it can be done under logarithmic space.
+
+The $\Longleftarrow$ is trivial to proof.
+
+
+\end{proof}
+
+\end{document}
