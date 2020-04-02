@@ -1,0 +1,217 @@
+\documentclass[12pt, a4paper]{article} % book, report, article, letter, slides
+                                       % letterpaper/a4paper, 10pt/11pt/12pt, twocolumn/twoside/landscape/draft
+
+%%%%%%%%%%%%%%%% PACKAGES %%%%%%%%%%%%%%%%%%%%%
+
+\usepackage[utf8]{inputenc} % encoding
+
+\usepackage[english]{babel} % use special characters and also translates some elements within the document.
+
+\usepackage{amsmath}        % Math
+\usepackage{amsthm}         % Math, \newtheorem, \proof, etc
+\usepackage{amssymb}        % Math, extended collection
+\usepackage{bm}             % $\bm{D + C}$
+\newtheorem{theorem}{Theorem}[section]     % \begin{theorem}\label{t:label}  \end{theorem}<Paste>
+\newtheorem{corollary}{Corollary}[theorem]
+\newtheorem{lemma}[theorem]{Lemma}
+\newenvironment{claim}[1]{\par\noindent\underline{Claim:}\space#1}{}
+\newenvironment{claimproof}[1]{\par\noindent\underline{Proof:}\space#1}{\hfill $\blacksquare$}
+
+\usepackage{hyperref}       % Hyperlinks \url{url} or \href{url}{name}
+
+\usepackage{parskip}        % \par starts on left (not idented)
+
+\usepackage{abstract}       % Abstract
+
+\usepackage{tocbibind}      % Adds the bibliography to the table of contents (automatically)
+
+\usepackage{graphicx}       % Images
+\graphicspath{ {./images/} }
+
+\usepackage[vlined,ruled]{algorithm2e} % pseudo-code
+
+% \usepackage[document]{ragged2e}  % Left-aligned (whole document)
+% \begin{...} ... \end{...}   flushleft, flushright, center
+
+%%%%%%%%%%%%%%%% CODE %%%%%%%%%%%%%%%%%%%%%
+
+\usepackage{minted}         % Code listing
+% \mint{html}|<h2>Something <b>here</b></h2>|
+% \inputminted{octave}{BitXorMatrix.m}
+
+%\begin{listing}[H]
+  %\begin{minted}[xleftmargin=20pt,linenos,bgcolor=codegray]{haskell}
+  %\end{minted}
+  %\caption{Example of a listing.}
+  %\label{lst:example} % You can reference it by \ref{lst:example}
+%\end{listing}
+
+\newcommand{\code}[1]{\texttt{#1}} % Define \code{foo.hs} environment
+
+%%%%%%%%%%%%%%%% COLOURS %%%%%%%%%%%%%%%%%%%%%
+
+\usepackage{xcolor}         % Colours \definecolor, \color{codegray}
+\definecolor{codegray}{rgb}{0.9, 0.9, 0.9}
+% \color{codegray} ... ...
+% \textcolor{red}{easily}
+
+%%%%%%%%%%%%%%%% CONFIG %%%%%%%%%%%%%%%%%%%%%
+
+\renewcommand{\absnamepos}{flushleft}
+\setlength{\absleftindent}{0pt}
+\setlength{\absrightindent}{0pt}
+
+%%%%%%%%%%%%%%%% GLOSSARIES & ACRONYMS %%%%%%%%%%%%%%%%%%%%%
+
+%\usepackage{glossaries}
+
+%\makeglossaries % before entries
+
+%\newglossaryentry{latex}{
+    %name=latex,
+    %description={Is a mark up language specially suited
+    %for scientific documents}
+%}
+
+% Referene to a glossary \gls{latex}
+% Print glossaries \printglossaries
+
+\usepackage[acronym]{glossaries} %
+
+% \acrshort{name}
+% \acrfull{name}
+\newacronym{kcol}{$k$-COL}{$k$-coloring problem}
+\newacronym{scol}{SEARCH-$k$-COL}{Search $k$-coloring problem}
+\newacronym{2col}{$2$-COL}{$2$-coloring problem}
+\newacronym{e2sat}{$E2$-SAT}{Exactly 2-SAT}
+
+%%%%%%%%%%%%%%%% HEADER %%%%%%%%%%%%%%%%%%%%%
+
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{Arnau Abella \- MIRI}
+\lhead{Computational Complexity}
+\rfoot{Page \thepage}
+
+%%%%%%%%%%%%%%%% TITLE %%%%%%%%%%%%%%%%%%%%%
+
+\title{%
+  Computational Complexity: Homework 2
+}
+\author{%
+  Arnau Abella \\
+  \large{Universitat Polit\`ecnica de Catalunya}
+}
+\date{\today}
+
+%%%%%%%%%%%%%%%% DOCUMENT %%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+\maketitle
+
+%%%%%%%%%% Exercise 1
+
+\section{Self-reducibility}
+
+\textbf{Exercise: Self-reducibility} Show that if the decision version \acrshort{kcol} of the \acrfull{kcol} can be solved in polynomial time, then its search version \acrshort{scol} can also be solved in polynomial time.
+
+We are going to describe an algorithm that can solve \acrshort{scol} in polynomial time.
+
+\begin{algorithm}[H]
+  \SetAlgoNoLine
+  \SetKwInOut{Input}{Input}
+  \SetKwInOut{Output}{Output}
+  \Input{Given the graph $G = \langle V, E \rangle$ and $k$ colors.}
+  \Output{A solution $a := a_1,\dots,a_{|V|}$ of \acrshort{scol}, $a_i = \{1..k\}$ \\ or $UNSAT$.}
+  \BlankLine
+  \For(\tcp*[f]{$|V|$ times}){$i \leftarrow 1$ \KwTo $|V|$}{
+    \For(\tcp*[f]{$|K|$ times}){$j \leftarrow 1$ \KwTo $|k|$}{
+      \tcp{Each assignment is a copy of the vector $a$}
+      \tcp{At most $|v|^{|k|}$ copies}
+      $a := (a_1,\dots,a_{i-1}, a_i = j)$;
+    }
+    \If{$i = |V|$}{
+      Test if $x := (x_1 = a_1, \dots, x_n = a_{|V|})$ is a valid assignment using \acrshort{kcol}; \tcp{p(n)-time}
+      If it is a valid assignment, then \emph{halt} and return $a$;
+     }
+  }
+  return $UNSAT$;
+  \caption{Na\"ive \acrshort{scol} Algorithm}
+  \label{scol}
+\end{algorithm}
+
+\newpage
+
+The total cost of the algorithm \ref{scol} is $\mathcal{O}(|k|^{|V|} \cdot n^c)$ where $|k| \leq n$ and $c > 0$.
+
+We found a polynomial time algorithm that solves \acrshort{scol} in polynomial time.
+
+%%%%%%%%%% Exercise 2
+
+\section{Zero-error}
+
+\textbf{Exercise: Zero-error} Show that if \acrshort{kcol} is in BPP, then it is also in ZPP. In other words, show that if there is a probabilistic polynomial time algorithm that decides whether a graph has a valid \acrshort{kcol}, and does so with bounded error, then there is also a probabilistic polynomial time algorithm that does that with zero error (in the sense of the definition of ZPP).
+
+Since \acrshort{kcol} is NP-complete, we can generalize the problem to
+
+\[
+  NP \subseteq BPP \implies NP = ZPP
+\]
+
+The basic inclusions are the following:
+
+\begin{align*}
+  P \subseteq ZPP \subseteq RP   &\subseteq NP   \\
+  P \subseteq ZPP \subseteq coRP &\subseteq coNP \\
+                              RP &\subseteq BPP  \\
+                            coRP &\subseteq BPP
+\end{align*}
+
+$P$ is contained in $ZPP = RP \cap coRP$, which is contained in $BPP$. Moreover, $RP$ is contained in $NP$ and $coRP$ is contained in $coNP$. \textbf{But we don't know how $NP$ and $coNP$ relate to $BPP$}.
+
+It follows from $NP \subseteq BPP$, that $NP = RP$. That means that $ coRP = coNP$ and $ZPP = NP \cap coNP $. So basically in this case, we have $P$, which contains $NP$ and $coNP$, and those are both contained in $BPP$.
+
+\textbf{Assuming} $\bm{NP = coNP}$, which is an \textit{open problem}, we can show that \acrshort{kcol} is in $ZPP$.
+
+
+%%%%%%%%%% Exercise 3
+
+\newpage
+
+\section{Logarithmic space}
+
+\textbf{Exercise: Logarithmic space} Show that $2$-COL is in P. Show that it is even in NL. [Since it is known that 3-COL is NP-complete, make sure that you are using something special about $2$-COL in your proof, and state what.]
+
+First, let's review what we know so far.
+
+\begin{theorem}\label{teo}
+  \acrshort{e2sat} $\in$ $NL$
+\end{theorem}
+
+\begin{proof}
+  Given a \acrshort{2col} F, we construct the \underline{implication graph $G(F)$} of F:
+  \begin{itemize}
+    \item One vertex for every literal
+    \item Two edge $\neg l \to l'$, $\neg l' \to l$ for every clause
+  \end{itemize}
+
+  \begin{claim}
+    If $G(F)$ contains a cycle that contains a variable and it's negation, then $F$ is $UNSAT$.
+  \end{claim}
+  \begin{claim}
+    (contrapositive) If $G(F)$ does not contains a cycle that contains a variable and it's negation, then $F$ is $SAT$.
+  \end{claim}
+\end{proof}
+
+Therefore, if we can give an algorithm to \textit{reduce} \acrshort{kcol} to \acrshort{e2sat} in polynomial time, we can use the theorem \ref{teo} to solve it in polynomial polynomial time.
+
+The algorithm is the following:
+
+  \begin{itemize}
+    \item There will be one clause for each edge, and one literal for each vertex.
+    \item Each clause will contain exactly two literals that represent the edge $\vec{uv}$, and each literal will codify the color of the vertex $i$ as there are only two possible colors.
+  \end{itemize}
+
+\end{document}
