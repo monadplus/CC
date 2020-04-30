@@ -1,3 +1,7 @@
+## Computational Complexity
+
+Website: <https://www.cs.upc.edu/~atserias/teaching/complexity/complexity20192020Q2.html>
+
 ### Professor
 
 Albert Asterias (atserias@cs.upc.edu) omega-231
@@ -12,5 +16,4 @@ Grade: max(0.6 HW + 0.4 Exam, Exam)
 
 ### Bibliography
 
-- _"Computational Complexity"_ - Arora & Barak (bought)
-- _"Computational Complexity"_ - Christos H. Papadimitriou
+- _"Computational Complexity"_ - Arora & Barak
