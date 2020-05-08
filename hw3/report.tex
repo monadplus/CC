@@ -82,6 +82,13 @@
 % \acrfull{name}
 % \newacronym{kcol}{$k$-COL}{$k$-coloring problem}
 
+%%%%%%%%%%%%%%% COMMANDS
+
+\newcommand{\sumip}{\sum_i^p}
+\newcommand{\sumipp}{\sum_{i-1}^p}
+\newcommand{\prodip}{\prod_i^p}
+\newcommand{\prodipp}{\prod_{i-1}^p}
+
 %%%%%%%%%%%%%%%% HEADER %%%%%%%%%%%%%%%%%%%%%
 
 \usepackage{fancyhdr}
@@ -114,21 +121,114 @@
 
 \textbf{Exercise: Oracles in BPP} \quad Prove that ${BPP}^{BPP} = BPP$.
 
-%%%%%%%%%% Exercise 2
+\begin{proof}
+  In order to prove equality we need to proof both inclusions:
 
-\newpage
+  \begin{align*}
+    BPP^{BPP} &\subseteq BPP \\
+    BPP &\subseteq BBP^{BPP}
+  \end{align*}
+
+  Let $L \in BPP^{BPP}$ be the class of languages decided by a $BPP$ machine $M$ with access to an oracle $O \in BPP$. The oracle $O$ decides the class of languages in $BPP$ in constant time (instead of polynomial time) using a $PTM$ $M'$ with a probability of error $E'$ e.g. $E' \leq 1/3$.
+
+  For every $x \in \{0,1\}^*$, $M$ applies the same algorithm used in the \textit{error reduction} method but making at most $p(|x|)$ independent calls to the oracle machine $M'$, where $p : \mathbb{N} \to \mathbb{N}$. The overall probability of error by $M$ deciding $L$ is $E < E'$. Hence, $\mathbf{BPP \subseteq BPP^{BPP}}$.
+
+  In the previous paragraph we saw that the probability of error of $M' \in BPP^{BPP}$ is $E$ which is smaller than the probability of error of $M \in BPP$. Let $M$ be in $BPP$, by \textit{error reduction} using $m \geq p(|x|)$ repitions, we can achieve a smaller probability of error then $E$. Therefore, $\mathbf{BPP^{BPP} \subseteq BPP}$.
+
+\end{proof}
+
+%%%%%%%%%% Exercise 2
 
 \section{Co-classes and the hierarchy}
 
 \textbf{Exercise: Co-classes and the hierarchy} \quad Prove that if $\sum_i^p = \prod_i^p$ for some $i \geq 1$, then the polynomial-time hierarchy collapses to its $i$-th level; i.e., $\sum_i^p = \prod_i^p = PH$
 
-%%%%%%%%%% Exercise 3
+\begin{proof}
 
-\newpage
+  Let $L \in \sumip$. By definition, there is a polynomial-time Turing machine $M$ and a polynomial $q$ such that
+
+  \begin{equation}\label{eq:one}
+    x \in L \iff \exists u_1 \in \{0,1\}^{q(|x|)} \forall u_2 \in \{0,1\}^{q(|x|)} \cdots Q_i u_i \in \{0,1\}^{q(|x|)} M(x, u_1, \cdots, u_i) = 1
+  \end{equation}
+
+  where $Q_i$ is $\exists / \forall$ alternatively. Define the language $L'$ as follows:
+
+  \begin{equation}
+    \langle x, u_1 \rangle \in L' \iff \forall u_2 \in \{0,1\}^{q(|x|)} \cdots Q_i u_i \in \{0,1\}^{q(|x|)} M(x, u_1, \cdots, u_i) = 1
+  \end{equation}
+
+  Clearly, $L' \in \prodipp$ and so under assumption $L'$ is in $\sumipp$. This implies that:
+
+  \begin{equation}\label{eq:two}
+    \begin{split}
+      \langle x, u_1 \rangle \in L' \iff & \exists v_1 \in \{0,1\}^{q(|x|)} \forall v_2 \in \{0,1\}^{q(|x|)}  \cdots Q_{i-1} v_{i-1} \in \{0,1\}^{q(|x|)} \\
+      &M(x, v_1, \cdots, v_{i-1}) = 1
+    \end{split}
+  \end{equation}
+
+  Plugging $L'$ in \ref{eq:one}, we get:
+
+  \begin{equation}
+    x \in L \iff \exists u_1 \in \{0,1\}^{q(|x|)} (x,u_1) \in L'
+  \end{equation}
+
+  Replacing $L'$ by the definition of \ref{eq:two}:
+
+  \begin{equation}
+    \begin{split}
+      x \in L \iff & \exists(u_1, v_1) \in \{0,1\}^{q(|x|)} \forall v_2 \in \{0,1\}^{q(|x|)} \cdots Q_{i-1} v_{i-1} \in \{0,1\}^{q(|x|)} \\
+      & M(x, v_1, \cdots, v_{i-1}) = 1
+    \end{split}
+  \end{equation}
+
+  But this means $L \in \sumipp$ and hence $\sumip = \sumipp$, then the hierarchy collapses.
+
+\end{proof}
+
+%%%%%%%%%% Exercise 3
 
 \section{Circuits and the hierarchy}
 
 \textbf{Exercise: Circuits and the hierarchy} \quad Prove that if $NP \subseteq P/poly$, then $NP^{NP} \subseteq P/poly$. It is also possible to prove that $NP \subseteq P/poly$ implies $\sum_2^p = \prod_2^p$. This is called the "Karp-Lipton Theorem".
 
+\begin{proof}
+
+  $P/poly$ is the class of languages that are decidable by polynomial-sized circuit families i.e. $P/poly = \cup_cSIZE(n^c)$, $c > 0$.
+
+  If $NP \subseteq P/poly$, then any $NP$ problem can be solved by a polynomial-sized circuit. An efficient translation would be reducing the problem to $SAT$ and direclty encoding the Boolean formula into a Boolean circuit.
+
+  Let's prove that any language in $NP^{NP}$ can be decided by the equivalent polynomial-sized circuit. An $NP^{NP}$ problem is the kind of problems that can be decided in polynomial time by a $NTM$ $M$ with access to an oracle $O \in NP$. Under the assumption that $NP \subseteq P/poly$, we can solve calls to the oracle $O$ using polynomial-sized circuits (notice, we are no longer talking about time but size of a circuit). So, the resulting circuit is the one that where the nodes which made calls to the oracle $O$ in the original problem, are replaced by the $n^d$-sized circuit that decides problems in $NP$. The overall size of the circuit $O(n^c n^d)$ $c,d > 0$ is still polynomial.
+
+\end{proof}
+
+  \subsubsection{Karp-Lipton Theorem: $NP \subseteq P/poly \implies PH = \sum_2^p$}
+
+  \begin{proof}
+
+    To show $PH = \sum_2^p$, it is enough showing that $\sum_2^p = \prod_2^p$ (as we proved in the second exercise).
+  In particular, it suffices to show $\prod_2^p \subseteq \sum_2^p$ i.e. $\sum_2^p$ contains the $\prod_2^p$-complete language $\prod_2SAT$:
+
+  \begin{equation}\label{eq:6}
+    \prod_2SAT: \forall u \in \{0,1\}^n \ \exists v \in \{0,1\}^n \ \varphi(u,v) = 1
+  \end{equation}
+
+  If $NP \subseteq P/poly$, then there exists a Boolean circuit family $\{C_n\}_{n \in \mathbb{N}}$ such that for every Boolean formula $\varphi$ and $u \in \{0,1\}^n$, $C_n(\varphi, u) = 1$ iff there exists $v \in \{0,1\}^n$ s.t. $\varphi(u,v) = 1$. Notice $C_n$ solves the decision problem for $SAT$.
+
+  Recalling from previous lectures, if $P = NP$, we can give a polynomial time algorithm that transform any decision problem to the equivalent search problem.
+  Let's express this algorithm as a circuit. There exist a $q(n)$-sized circuit family $\{C'_n\}_{n \in \mathbb{N}}$, where $q$ is a polynomial function, such that for every formula $\varphi$ and $u \in \{0,1\}^n$, if there is a string $v \in \{0,1\}^n$ s.t. $\varphi(u,v) = 1$, then $C'_n(\varphi, u)$ output such string $v$. The assumption of $NP \subseteq P/poly$ implies the existence of such circuits.
+
+  The main idea of Karp-Lipton is that such a circuit can be \textit{"guessed"} using $\exists$ quantifications.
+  Since the circuit outputs a satisfying assignment if one exists, this answer can be checked directly.
+  Formaly, since $C'_n$ can be described using $10q(n)^2$ bits, if (\ref{eq:6}) holds then the following quantified formula is true:
+
+  \begin{equation}\label{eq:7}
+     \forall u \in \{0,1\}^n \exists w \in \{0,1\}^{10q(n)^2} \ \text{s.t. $w$ describes a circuit C' and} \ \varphi(u, C'(\varphi, u))) = 1
+  \end{equation}
+
+  Furthermore, if (\ref{eq:6}) is false, then for some $u$, no $v$ exists such that $\varphi(u,v) = 1$ and hence (\ref{eq:7}) is false as well.
+  Thus (\ref{eq:6}) holds if and only if (\ref{eq:7}) holds.
+  Finally, since evaluating a ciruit can be done deterministically in polynomial time, the truth of (\ref{eq:7}) can be verified in $\sum_2^p$.
+
+  \end{proof}
 
 \end{document}
