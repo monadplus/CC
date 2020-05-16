@@ -1,0 +1,166 @@
+\documentclass[12pt, a4paper]{article} % book, report, article, letter, slides
+                                       % letterpaper/a4paper, 10pt/11pt/12pt, twocolumn/twoside/landscape/draft
+
+%%%%%%%%%%%%%%%% PACKAGES %%%%%%%%%%%%%%%%%%%%%
+
+\usepackage[utf8]{inputenc} % encoding
+
+\usepackage[english]{babel} % use special characters and also translates some elements within the document.
+
+\usepackage{amsmath}        % Math
+\usepackage{amsthm}         % Math, \newtheorem, \proof, etc
+\usepackage{amssymb}        % Math, extended collection
+\usepackage{amsfonts}       % Math, Natural, Integers and so
+\usepackage{bm}             % $\bm{D + C}$
+\newtheorem{theorem}{Theorem}[section]     % \begin{theorem}\label{t:label}  \end{theorem}<Paste>
+\newtheorem{corollary}{Corollary}[theorem]
+\newtheorem{lemma}[theorem]{Lemma}
+\newenvironment{claim}[1]{\par\noindent\underline{Claim:}\space#1}{}
+\newenvironment{claimproof}[1]{\par\noindent\underline{Proof:}\space#1}{\hfill $\blacksquare$}
+
+\usepackage{hyperref}       % Hyperlinks \url{url} or \href{url}{name}
+
+\usepackage{parskip}        % \par starts on left (not idented)
+
+\usepackage{abstract}       % Abstract
+
+\usepackage{tocbibind}      % Adds the bibliography to the table of contents (automatically)
+
+\usepackage{graphicx}       % Images
+\graphicspath{ {./images/} }
+
+\usepackage[vlined,ruled]{algorithm2e} % pseudo-code
+
+% \usepackage[document]{ragged2e}  % Left-aligned (whole document)
+% \begin{...} ... \end{...}   flushleft, flushright, center
+
+%%%%%%%%%%%%%%%% CODE %%%%%%%%%%%%%%%%%%%%%
+
+\usepackage{minted}         % Code listing
+% \mint{html}|<h2>Something <b>here</b></h2>|
+% \inputminted{octave}{BitXorMatrix.m}
+
+%\begin{listing}[H]
+  %\begin{minted}[xleftmargin=20pt,linenos,bgcolor=codegray]{haskell}
+  %\end{minted}
+  %\caption{Example of a listing.}
+  %\label{lst:example} % You can reference it by \ref{lst:example}
+%\end{listing}
+
+\newcommand{\code}[1]{\texttt{#1}} % Define \code{foo.hs} environment
+
+%%%%%%%%%%%%%%%% COLOURS %%%%%%%%%%%%%%%%%%%%%
+
+\usepackage{xcolor}         % Colours \definecolor, \color{codegray}
+\definecolor{codegray}{rgb}{0.9, 0.9, 0.9}
+% \color{codegray} ... ...
+% \textcolor{red}{easily}
+
+%%%%%%%%%%%%%%%% CONFIG %%%%%%%%%%%%%%%%%%%%%
+
+\renewcommand{\absnamepos}{flushleft}
+\setlength{\absleftindent}{0pt}
+\setlength{\absrightindent}{0pt}
+
+%%%%%%%%%%%%%%%% GLOSSARIES & ACRONYMS %%%%%%%%%%%%%%%%%%%%%
+
+%\usepackage{glossaries}
+
+%\makeglossaries % before entries
+
+%\newglossaryentry{latex}{
+    %name=latex,
+    %description={Is a mark up language specially suited
+    %for scientific documents}
+%}
+
+% Referene to a glossary \gls{latex}
+% Print glossaries \printglossaries
+
+\usepackage[acronym]{glossaries} %
+
+% \acrshort{name}
+% \acrfull{name}
+% \newacronym{kcol}{$k$-COL}{$k$-coloring problem}
+
+%%%%%%%%%%%%%%% COMMANDS
+
+\newcommand{\Z}{\mathbb{Z}}
+
+%%%%%%%%%%%%%%%% HEADER %%%%%%%%%%%%%%%%%%%%%
+
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{Arnau Abella \- MIRI}
+\lhead{Computational Complexity}
+\rfoot{Page \thepage}
+
+%%%%%%%%%%%%%%%% TITLE %%%%%%%%%%%%%%%%%%%%%
+
+\title{%
+  Computational Complexity: Homework 4
+}
+\author{%
+  Arnau Abella \\
+  \large{Universitat Polit\`ecnica de Catalunya}
+}
+\date{\today}
+
+%%%%%%%%%%%%%%%% DOCUMENT %%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+\maketitle
+
+%%%%%%%%%% Exercise 1
+
+\section{More on hash functions}
+
+\textbf{Exercise: More on hash functions} \quad Let $p$ be a prime number, let $\Z_p$ denote the field of arithmetic mod $p$. For each $a,b,c \in \Z_p$, let ${P_{a,b,c,} : \Z_p \to \Z_p}$ be the quadratic polynomial defined by $P_{a,b,c}(x) = ax^2 + bx + c \ mod \ p$. Show that the family of functions ${ P_{a,b,c}: a,b,c \in \Z_p}$ satisfies the following 3-universal property: for every three distinct $x_1, x_2, x_3 \in \Z_p$ and every $y_1, y_2, y_3 \in \Z_p$ we have
+
+\begin{equation}\label{eq:one}
+  \underset{a,b,c \in_R \Z_p}{Pr} [ P_{a,b,c}(x) = y_i \ for \ i = 1,2,3] = \frac{1}{p^3}
+\end{equation}
+
+The notation "$a,b,c, \in_R \Z_p$" under "$Pr$" means that $a,b$ and $c$ are chosen uniformly and independently at random in $\Z_p$.
+
+
+\begin{proof}
+
+  TODO
+
+\end{proof}
+
+%%%%%%%%%% Exercise 2
+
+\section{More on hasing for estimating sizes of sets}
+
+\textbf{More on hasing for estimating sizes of sets} \quad Let $m$ and $k$ be positive integers and let $U = U_{m,k}$ be a 2-universal family of hash functions from $m$ bits to $k$ bits. For any fixed set $S \subseteq \{0,1\}^m$ and a randomly chosen $h \in U$, let $I(S,h)$ be the indicator random variable for the event that $h$ has collision on $S$: "there exists two distinct $x,y \in S$ with $h(x) = h(y)$". Prove the following:
+
+\begin{enumerate}
+  \item If $|S| > 2^{2k}$, then $Pr_{h \in_r U} [I(S,h) = 1] = 1$
+  \item If $|S| < 2^{k}$ , then $Pr_{h \in_r U} [I(S,h) = 1] \leq 1 - 2^{-k}$
+\end{enumerate}
+
+Recall that the notation "$h \in_r U$" under "$Pr$" means that $h$ is chosen uniformly at random in $U$.
+
+\begin{proof}
+
+  TODO
+
+\end{proof}
+
+%%%%%%%%%% Exercise 3
+
+\section{Approximate counting up to a square}
+
+\textbf{Approximate counting up to a square} \quad Use the result of the previous exercise to show that for any $\#P$ function $f$ there exists a \textit{deterministic} polynomial time algorithm that, given an $n$-bit input $x$ and access to an $NP^{NP}$-oracle, outputs a number $t$ satisfying $t \leq f(x) \leq t^2$
+
+\begin{proof}
+
+  TODO
+
+\end{proof}
+
+\end{document}
