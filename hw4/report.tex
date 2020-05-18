@@ -15,6 +15,8 @@
 \newtheorem{theorem}{Theorem}[section]     % \begin{theorem}\label{t:label}  \end{theorem}<Paste>
 \newtheorem{corollary}{Corollary}[theorem]
 \newtheorem{lemma}[theorem]{Lemma}
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
 \newenvironment{claim}[1]{\par\noindent\underline{Claim:}\space#1}{}
 \newenvironment{claimproof}[1]{\par\noindent\underline{Proof:}\space#1}{\hfill $\blacksquare$}
 
@@ -125,37 +127,93 @@
 
 The notation "$a,b,c, \in_R \Z_p$" under "$Pr$" means that $a,b$ and $c$ are chosen uniformly and independently at random in $\Z_p$.
 
-
 \begin{proof}
 
-  TODO
+  Let $x_1 \neq x_2, x_1 \neq x_3, x_1 \neq x_3 \in \Z_p$ and $y_1, y_2, y_3 \in \Z_p$. Then we will show that $P_{a,b,c}$ is completely determined by the choice of $a,b,c \in \Z_p$ and the number of possible triplets is exactly $1/p^3$. This can be achieved by expressing the linear equation of the quadratic polynomials defined by $P_{a,b,c}$ in matrix form and applying the inverse (there is one because $p$ is prime and $x_1, x_2, x_3 \in \Z_p$) to the left hand-side:
+
+\begin{align*}
+  \underset{a,b,c \in_R \Z_p}{Pr} & [ P_{a,b,c}(x_1) = y_1 \land P_{a,b,c}(x_2) = y_2 \land P_{a,b,c}(x_3) = y_3]\\
+  & = Pr \begin{bmatrix}A\begin{bmatrix}a\\b\\c\end{bmatrix} = \begin{bmatrix}y_1\\y_2\\y_3\end{bmatrix}\end{bmatrix} \\
+  & = Pr \begin{bmatrix}A^{-1}A\begin{bmatrix}a\\b\\c\end{bmatrix} = A^{-1}\begin{bmatrix}y_1\\y_2\\y_3\end{bmatrix}\end{bmatrix}\\
+  & = Pr \begin{bmatrix}\begin{bmatrix}a\\b\\c\end{bmatrix} = A^{-1}\begin{bmatrix}y_1\\y_2\\y_3\end{bmatrix}\end{bmatrix}\\
+  & = Pr \begin{bmatrix}\begin{bmatrix}a\\b\\c\end{bmatrix} = \frac{1}{|A|}Adj(A)\begin{bmatrix}y_1\\y_2\\y_3\end{bmatrix}\end{bmatrix}\\
+  & = 1/p^3
+\end{align*}
+
+where $A = \begin{bmatrix} x_1^2 & x_1 & 1\\ x_2^2 & x_2 & 1\\ x_3^2 & x_3 & 1 \end{bmatrix}$
 
 \end{proof}
 
 %%%%%%%%%% Exercise 2
+
+\newpage
 
 \section{More on hasing for estimating sizes of sets}
 
 \textbf{More on hasing for estimating sizes of sets} \quad Let $m$ and $k$ be positive integers and let $U = U_{m,k}$ be a 2-universal family of hash functions from $m$ bits to $k$ bits. For any fixed set $S \subseteq \{0,1\}^m$ and a randomly chosen $h \in U$, let $I(S,h)$ be the indicator random variable for the event that $h$ has collision on $S$: "there exists two distinct $x,y \in S$ with $h(x) = h(y)$". Prove the following:
 
 \begin{enumerate}
-  \item If $|S| > 2^{2k}$, then $Pr_{h \in_r U} [I(S,h) = 1] = 1$
-  \item If $|S| < 2^{k}$ , then $Pr_{h \in_r U} [I(S,h) = 1] \leq 1 - 2^{-k}$
+  \item If $|S| > 2^{k}$, then $Pr_{h \in_r U} [I(S,h) = 1] = 1$
+  \item If $|S| < 2^{k/2}$ , then $Pr_{h \in_r U} [I(S,h) = 1] \leq 1/2$
 \end{enumerate}
 
 Recall that the notation "$h \in_r U$" under "$Pr$" means that $h$ is chosen uniformly at random in $U$.
 
+\begin{definition}
+  Let $U$ be a universe with $|U| \geq n$ and let $V = \{0,1,\cdots, n- 1\}$. A family of hash functions $\mathcal{H}$ from $U$ to $V$ is said to be \textbf{k-universal} if, for any elements $x_1, x_2, \cdots, x_k$ and for a hash function $h$ chosen uniformly at random from $\mathcal{H}$, we have
+
+  \[
+    Pr(h(x_1) = h(x_2) = \cdots = h(x_k)) \leq \frac{1}{n^{k-1}}
+
+  \]
+\end{definition}
+
+%%% Property 1.
+\textbf{Property 1.} \quad If $|S| > 2^{k}$, then $Pr_{h \in_r U} [I(S,h) = 1] = 1$
+
 \begin{proof}
 
-  TODO
+
+  Given $|S| >  2^k$, the total number of possible combinations of pairs is $\binom{2^k}{2}$.
+  Suppose that $V$ is at most of size $|S|^2$.
+  Therefore, the overall probability of the random variable $I = 1$ is
+
+  \begin{align*}
+    Pr_{h \in_r U} [I(S,h) = 1] &\leq \binom{2^k}{2}\frac{1}{2^{2k}}\\
+                                &\leq \frac{2^k(2^k - 1)}{2 \cdot 2^k \cdot 2^k}\\
+                                &\leq \frac{2^k - 1}{2 \cdot 2^k}\\
+                                &\approx 1 \ (\text{when} \ k > 1)
+  \end{align*}
 
 \end{proof}
+
+%%% Property 2.
+\textbf{Property 2.} \quad If $|S| < 2^{k/2}$ , then $Pr_{h \in_r U} [I(S,h) = 1] \leq 1/2$
+
+\begin{proof}
+
+
+  Given $|S| <  2^{k/2}$, suppose that the size of $V$ is at least $|S|^2$.
+  Therefore, the overall probability of the random variable $I = 1$ is
+
+  \begin{align*}
+    Pr_{h \in_r U} [I(S,h) = 1] &\leq \binom{2^{k/2}}{2}\frac{1}{2^k}\\
+                                &\leq \frac{2^{k/2}(2^{k/2} - 1)}{2 \cdot 2^k}\\
+                                &\leq \frac{2^{k/2} - 1}{2 \cdot 2^{k/2}}\\
+                                &< \frac{1}{2}
+  \end{align*}
+
+
+\end{proof}
+
+Notice that we fixed the size of $V$ to be at least $|S|^2$ in both cases to achieve such probabilities.
 
 %%%%%%%%%% Exercise 3
 
 \section{Approximate counting up to a square}
 
 \textbf{Approximate counting up to a square} \quad Use the result of the previous exercise to show that for any $\#P$ function $f$ there exists a \textit{deterministic} polynomial time algorithm that, given an $n$-bit input $x$ and access to an $NP^{NP}$-oracle, outputs a number $t$ satisfying $t \leq f(x) \leq t^2$
+
 
 \begin{proof}
 
