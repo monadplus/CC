@@ -29,7 +29,7 @@
 \usepackage{tocbibind}      % Adds the bibliography to the table of contents (automatically)
 
 \usepackage{graphicx}       % Images
-\graphicspath{ {./images/} }
+\graphicspath{{./images/}}
 
 \usepackage[vlined,ruled]{algorithm2e} % pseudo-code
 
@@ -122,7 +122,7 @@
 \textbf{Exercise: More on hash functions} \quad Let $p$ be a prime number, let $\Z_p$ denote the field of arithmetic mod $p$. For each $a,b,c \in \Z_p$, let ${P_{a,b,c,} : \Z_p \to \Z_p}$ be the quadratic polynomial defined by $P_{a,b,c}(x) = ax^2 + bx + c \ mod \ p$. Show that the family of functions ${ P_{a,b,c}: a,b,c \in \Z_p}$ satisfies the following 3-universal property: for every three distinct $x_1, x_2, x_3 \in \Z_p$ and every $y_1, y_2, y_3 \in \Z_p$ we have
 
 \begin{equation}\label{eq:one}
-  \underset{a,b,c \in_R \Z_p}{Pr} [ P_{a,b,c}(x) = y_i \ for \ i = 1,2,3] = \frac{1}{p^3}
+  \underset{a,b,c \in_R \Z_p}{Pr} [ P_{a,b,c}(x_i) = y_i \ for \ i = 1,2,3] = \frac{1}{p^3}
 \end{equation}
 
 The notation "$a,b,c, \in_R \Z_p$" under "$Pr$" means that $a,b$ and $c$ are chosen uniformly and independently at random in $\Z_p$.
@@ -153,8 +153,8 @@ where $A = \begin{bmatrix} x_1^2 & x_1 & 1\\ x_2^2 & x_2 & 1\\ x_3^2 & x_3 & 1 \
 \textbf{More on hasing for estimating sizes of sets} \quad Let $m$ and $k$ be positive integers and let $U = U_{m,k}$ be a 2-universal family of hash functions from $m$ bits to $k$ bits. For any fixed set $S \subseteq \{0,1\}^m$ and a randomly chosen $h \in U$, let $I(S,h)$ be the indicator random variable for the event that $h$ has collision on $S$: "there exists two distinct $x,y \in S$ with $h(x) = h(y)$". Prove the following:
 
 \begin{enumerate}
-  \item If $|S| > 2^{k}$, then $Pr_{h \in_r U} [I(S,h) = 1] = 1$
-  \item If $|S| < 2^{k/2}$ , then $Pr_{h \in_r U} [I(S,h) = 1] \leq 1/2$
+  \item If $|S| > 2^{k}$, then $Pr_{h \in_r U} [I(S,h) = 1] = 1$ \label{prop:one}
+  \item If $|S| < 2^{k/2}$ , then $Pr_{h \in_r U} [I(S,h) = 1] \leq 1/2$ \label{prop:two}
 \end{enumerate}
 
 Recall that the notation "$h \in_r U$" under "$Pr$" means that $h$ is chosen uniformly at random in $U$.
@@ -162,10 +162,7 @@ Recall that the notation "$h \in_r U$" under "$Pr$" means that $h$ is chosen uni
 \begin{definition}
   Let $U$ be a universe with $|U| \geq n$ and let $V = \{0,1,\cdots, n- 1\}$. A family of hash functions $\mathcal{H}$ from $U$ to $V$ is said to be \textbf{k-universal} if, for any elements $x_1, x_2, \cdots, x_k$ and for a hash function $h$ chosen uniformly at random from $\mathcal{H}$, we have
 
-  \[
-    Pr(h(x_1) = h(x_2) = \cdots = h(x_k)) \leq \frac{1}{n^{k-1}}
-
-  \]
+  \[ Pr(h(x_1) = h(x_2) = \cdots = h(x_k)) \leq \frac{1}{n^{k-1}} \]
 \end{definition}
 
 %%% Property 1.
@@ -206,7 +203,7 @@ Recall that the notation "$h \in_r U$" under "$Pr$" means that $h$ is chosen uni
 
 \end{proof}
 
-Notice that we fixed the size of $V$ to be at least $|S|^2$ in both cases to achieve such probabilities.
+Notice that we fixed the size of $V$ to be at least $|S|^2$ in both cases. In order to make the probability of the first property be $= 1$ (instead of $\approx 1$), we must fix the size of $V$ to be at most $|S|$.
 
 %%%%%%%%%% Exercise 3
 
@@ -214,11 +211,110 @@ Notice that we fixed the size of $V$ to be at least $|S|^2$ in both cases to ach
 
 \textbf{Approximate counting up to a square} \quad Use the result of the previous exercise to show that for any $\#P$ function $f$ there exists a \textit{deterministic} polynomial time algorithm that, given an $n$-bit input $x$ and access to an $NP^{NP}$-oracle, outputs a number $t$ satisfying $t \leq f(x) \leq t^2$
 
-
 \begin{proof}
 
-  TODO
+  This proof is based on the following Stanford lecture's note \cite{lecture}. I adapted the proof to use an $NP^{NP}$-oracle instead of a $BPP^{NP}$-oracle by relaxing the $O(1)$-approximation to a $poly$-approximation.
+
+  We first make some observations so that we can reduce the proof.
+
+  \begin{itemize}
+    \item It is enought to prove that theorem for $\#3SAT$. If we have an approximation algorithm for $\#3SAT$, we can extend it to any $\#A$ in $\#P$ using the \textit{parsimonious reduction} from $\#A$ to $\#3SAT$.
+    \item It is enought to give a polynomial time $O(1)$-approximation for $\#3SAT$.
+
+          Suppose we have an algorithm $C$ and a constant $c$ such that
+
+          \begin{equation}\label{eq:2}
+            \frac{1}{c}\#3SAT(\varphi) \leq C(\varphi) \leq c \cdot \#3SAT(\varphi)
+          \end{equation}
+
+          Given $\varphi$, we can construct $\varphi^k = \varphi_1 \land \varphi_2 \land \cdots \land \varphi_k$ where each $\phi_1$ is a copy of $\phi$ constructed using fresh variables. If $\varphi$ has $t$ satisfying assignments, $\varphi^k$ has $t^k$ satisfying assignments. Then, given $\varphi^k$ to the algorithm we get
+
+          \begin{align*}
+            \frac{1}{c}t^k \leq &C(\varphi^k) \leq ct^k \\
+            \frac{1^{1/k}}{c}t^k \leq &C(\varphi^k)^{1/k} \leq c^{1/k}t
+          \end{align*}
+
+          If $c$ is a constant and $k = O(\frac{1}{\epsilon}), c^{1/k} = 1 + \epsilon$.
+
+        \item For a formula $\varphi$ that has O(1) satisfying assignments, $\#3SAT(\varphi)$ can be found in $P^{NP}$. This can be done by iteratively asking the oracle the questions of the form: "Are there $k$ assignments satisfying this formula?" Notice that these are $NP$ questions, because the algorithm can guess these $k$ assignments and check them.
+  \end{itemize}
+
+  Suposse that we had available an approximate comparison procedure a-comp with the following properties:
+
+  \begin{itemize}
+    \item If $\#3SAT(\varphi) \geq 2^{k+1}$ then $a- comp(\varphi, k) = YES$ with high probability.
+    \item If $\#3SAT(\varphi) \leq 2^{k}$ then $a- comp(\varphi, k) = NO$ with high probability.
+  \end{itemize}
+
+  Given $a-comp$, we can construct an algorithm that $2$-approximates $\#3SAT$ as described below:
+
+  \begin{algorithm}[H]
+    \SetAlgoNoLine
+    \SetKwInOut{Input}{Input}
+    \SetKwInOut{Output}{Output}
+    \Input{$\varphi$}
+    \For{$t = 0,1,\cdots, n + 1$}{
+      $a-comp(\varphi, t)$
+    }
+    \uIf{$a-comp$ outputs $NO$ from the first time}{
+      The value is either 0 or 1 and the answer can be checked by one more query to the $NP$-oracle. \\
+      Query to the oracle and output an exact value.
+    }
+    \Else{
+      Suppose that it outputs $YES$ for $t = 1,\cdots,i-1$ and $NO$ for $t=1$ \\
+      Output $2^i$
+    }
+    \caption{2-approximation of $\#3SAT$}
+    \label{2-approx}
+  \end{algorithm}
+
+  \newpage
+
+  We show that this algorithm approximates $\#3SAT$ within a factor of $2$.
+  If $a-comp$ answers $NO$ from the first time, the algorithm outputs the right answer because it checks for
+  the answer explicitly. Now suppose $a-comp$ says $YES$ for all $t = 1,2,\cdots, i - 1$ ans says $NO$ for $t=i$.
+  Since $a-comp(\varphi, i-1)$ outputs $YES$, $\#3SAT(\varphi) \geq 2^{i-1}$, and also since $a-comp(\varphi, 2^i)$ outputs $NO$, $\#3SAT < 2{i+1}$. The algorithm outputs $a = 2^i$. Hence,
+
+  \begin{equation}\label{eq:3}
+    \frac{1}{2}a \leq \#3SAT(\varphi) < 2 \cdot a
+  \end{equation}
+
+  and the algorithm outputs the correct answer with in a factor of 2.
+
+  It is enough to give a $NP^{NP}$ implementation of the $a-comp$ procedure.
+
+  The procedure and its analysis is similar to the Valiant-Vazirani reduction: for a given formula $\phi$ we pick a hash function $h$ from a $2$-universal family of hash functions, and look at the number of assignments $x$ that satisfy $h$ and such $h(x) = 0$.
+
+  In the Valiant-Vazirani reduction, we proved that if $S$ is a set of size approximately equal to the size of the range of $h()$, then with constant probability, exactly one element of $S$ is mapped to $h()$ into 0. Now we use the result from exercise 2. From this, $a-comp$ can be constructed as follows.
+
+  \begin{algorithm}[H]
+    \SetAlgoNoLine
+    \SetKwInOut{Input}{Input}
+    \SetKwInOut{Output}{Output}
+    \Input{$\varphi$, k}
+    \uIf{$k \leq 5$}{
+      Check exactly whether $\#3SAT(\varphi) \ge 2^k$.
+    }
+    \Else{
+      Pick $h$ from the set of $2$-universal hash functions $h: \{0,1\}^n \to \{0,1\}^m$, where $m = k - 5$.
+      Answer $YES$ iff there are more than $n$ assignments $a$ to $\varphi$ that $a$ satisfies $\varphi$ and $h(a)=0$.
+    }
+    \caption{$a-comp$}
+    \label{2-approx}
+  \end{algorithm}
+
+  Notice that the test at the last step can be done with one access to an oracle to $NP$. We need to show that the algorithm is in $NP^{NP}$. Let $S \subseteq \{0,1\}^n$ be the set of satisfying assignments for $\varphi$. There are 2 cases:
+
+  \begin{itemize}
+    \item If $|S| \geq 2^{k}$, by \ref{prop:one} we have a high probability of success.
+    \item If $|S| \leq 2^{k/2}$, by \ref{prop:two} we have $\leq 1/2$ of success, but using the error-reduction technique from the lectures, we can amplify the probability of success by $n$-calls to $a-comp$ and taking the majority answer.
+  \end{itemize}
+
 
 \end{proof}
+
+\begin{thebibliography}{1}
+  \bibitem{lecture} CS254 Lecture 8, \url{https://lucatrevisan.wordpress.com/2010/05/06/cs254-lecture-8-approximate-counting/}
+\end{thebibliography}
 
 \end{document}
