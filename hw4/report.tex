@@ -172,17 +172,19 @@ Recall that the notation "$h \in_r U$" under "$Pr$" means that $h$ is chosen uni
 
 
   Given $|S| >  2^k$, the total number of possible combinations of pairs is $\binom{2^k}{2}$.
-  Suppose that $V$ is at most of size $|S|^2$.
+  Suppose that $V$ is at most of size $|S|$.
   Therefore, the overall probability of the random variable $I = 1$ is
 
   \begin{align*}
-    Pr_{h \in_r U} [I(S,h) = 1] &\leq \binom{2^k}{2}\frac{1}{2^{2k}}\\
+    Pr_{h \in_r U} [I(S,h) = 1] &\leq \binom{2^k}{2}\frac{1}{2^{2k^1}}\\
                                 &\leq \frac{2^k(2^k - 1)}{2 \cdot 2^k \cdot 2^k}\\
                                 &\leq \frac{2^k - 1}{2 \cdot 2^k}\\
                                 &\approx 1 \ (\text{when} \ k > 1)
   \end{align*}
 
 \end{proof}
+
+\newpage
 
 %%% Property 2.
 \textbf{Property 2.} \quad If $|S| < 2^{k/2}$ , then $Pr_{h \in_r U} [I(S,h) = 1] \leq 1/2$
@@ -194,16 +196,15 @@ Recall that the notation "$h \in_r U$" under "$Pr$" means that $h$ is chosen uni
   Therefore, the overall probability of the random variable $I = 1$ is
 
   \begin{align*}
-    Pr_{h \in_r U} [I(S,h) = 1] &\leq \binom{2^{k/2}}{2}\frac{1}{2^k}\\
+    Pr_{h \in_r U} [I(S,h) = 1] &\leq \binom{2^{k/2}}{2}\frac{1}{{2^{k/2}}^2}\\
                                 &\leq \frac{2^{k/2}(2^{k/2} - 1)}{2 \cdot 2^k}\\
+                                &\leq \frac{2^{k/2}(2^{k/2} - 1)}{2 \cdot 2^{k/2} \cdot 2^{k/2}}\\
                                 &\leq \frac{2^{k/2} - 1}{2 \cdot 2^{k/2}}\\
                                 &< \frac{1}{2}
   \end{align*}
 
 
 \end{proof}
-
-Notice that we fixed the size of $V$ to be at least $|S|^2$ in both cases. In order to make the probability of the first property be $= 1$ (instead of $\approx 1$), we must fix the size of $V$ to be at most $|S|$.
 
 %%%%%%%%%% Exercise 3
 

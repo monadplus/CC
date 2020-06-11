@@ -1,0 +1,13 @@
+Grade: C, A
+
+Exercise 1: Your algorithm doesn't work: the loop over j overwrites a
+once and again. If you intended to create a different vector a =
+(a_1,...,a_|V|) for each possible assignment of colors to the
+vertices, then it would take time k^|V|, instead of |V|^k
+like you say, and this is exponential.
+
+Exercise 2: Withdrawn. Sorry. See raco for explanation.
+
+Exercise 3: You need more clauses than just one for each edge, but
+this will end up working.
+
