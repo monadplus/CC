@@ -1,0 +1,22 @@
+Grade: B-, A, B+
+
+Exercise 1: The structure of the proof is confusing. You start with a
+language L in BPP^BPP but you end up concluding that BPP is included
+in BPP^BPP. For the converse inclusion a similar thing happens. In
+addition, the proof that BPP^BPP is a subset of BPP should indeed use
+error-reduction, but the point of the exercise was to make this
+calculations explicit. By how much should the error be reduced and how
+is the error reduction used?
+
+Exercise 2: Very good.
+
+Exercise 3: You proof that NP in P/poly implies NP^NP in P/poly is not
+quite correct because even though the assumption that NP in P/poly
+allows you to replace the oracle calls of the starting NP^NP algorithm
+by polynomial-size circuits, what results is not a polynomial-size
+circuit itself but a non-uniform family of non-deterministic
+polynomial-time algorithms. Basically you need to apply the assumption
+once again on this family of non-uniform non-deterministic algorithms,
+which is not totally obvious due to the non-uniformity. The expositin
+of Karp-Lipton is good.
+

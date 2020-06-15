@@ -1,0 +1,11 @@
+Grade: A, B+, A-
+
+Exercise 1: Very good.
+
+Exercise 2: Part 1 didn't need any probability computations. It's just
+pigeonhole. And you get an upper bound anyway. Part 2 is good.
+
+Exercise 3: It's good but I would have preferred a solution for the
+weaker statement using what you proved in exercise 2 so you show that
+you understood.
+
