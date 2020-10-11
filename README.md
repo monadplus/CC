@@ -14,6 +14,8 @@ Albert Asterias (atserias@cs.upc.edu) omega-231
 
 Grade: max(0.6 HW + 0.4 Exam, Exam)
 
+This is a change
+
 ### Bibliography
 
 - _"Computational Complexity"_ - Arora & Barak
